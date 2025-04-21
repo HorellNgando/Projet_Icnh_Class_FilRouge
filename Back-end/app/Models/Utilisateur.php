@@ -12,15 +12,15 @@ class Utilisateur extends Authenticatable
 
     protected $table = 'utilisateurs';
     protected $primaryKey = 'id_utilisateur';
-    public $incrementing = false; // Désactive l'auto-incrémentation
-    protected $keyType = 'string'; // Définit la clé comme une chaîne
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
-        'id_utilisateur', 'nom', 'prenom', 'email', 'telephone','password', 'role', 'status',
+        'id_utilisateur', 'nom', 'prenom', 'email', 'telephone', 'password', 'role', 'status',
     ];
 
     protected $hidden = [
-        'mot_de_passe', 'remember_token',
+        'password', 'remember_token',
     ];
 
     protected $casts = [

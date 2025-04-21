@@ -8,6 +8,7 @@ use App\Models\ConnexionLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -18,18 +19,20 @@ class AuthController extends Controller
             'prenom' => 'required|string|max:255',
             'email' => 'required|email|unique:utilisateurs,email',
             'telephone' => 'required|string|max:20',
+            'adresse' => 'required|string|max:100',
             'password' => 'required|string|min:6',
         ]);
 
         $user = Utilisateur::create([
-            'id_utilisateur' => 'U' . str_pad(mt_rand(1, 999), 3, '0', STR_PAD_LEFT),
+            'id_utilisateur' => 'U' . str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT),
             'nom' => $validated['nom'],
             'prenom' => $validated['prenom'],
             'email' => $validated['email'],
             'telephone' => $validated['telephone'],
+            'adresse' => $validated['adresse'],
             'password' => Hash::make($validated['password']),
-            'role' => 'patient', // Rôle par défaut
-            'status' => 'actif', // Statut par défaut
+            'role' => 'patient',
+            'status' => 'actif',
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -74,6 +77,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $user = $request->user();
+
         $lastLog = ConnexionLog::where('id_utilisateur', $user->id_utilisateur)
             ->whereNull('deconnexion_at')
             ->orderBy('connexion_at', 'desc')
@@ -87,6 +91,7 @@ class AuthController extends Controller
         }
 
         $request->user()->currentAccessToken()->delete();
+
         return response()->json(['message' => 'Déconnexion réussie']);
     }
 

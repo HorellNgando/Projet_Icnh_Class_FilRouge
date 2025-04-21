@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import axios from 'axios';
@@ -21,7 +21,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.password) {
-      setError('The password field is required.');
+      setError('Le champ mot de passe est requis.');
       return;
     }
     setLoading(true);
@@ -34,21 +34,22 @@ const Login = () => {
 
       if (user.status !== 'actif') {
         setError('Votre compte a été licencié. Contactez l\'administrateur.');
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        localStorage.removeItem('role');
+        localStorage.clear();
         return;
       }
 
       // Redirection selon le rôle
-      if (user.role === 'patient') {
-        navigate('/patient/dashboard');
-      } else if (user.role === 'admin') {
-        navigate('/admin/dashboard');
-      } else if (user.role === 'medecin') {
-        navigate('/medecin/dashboard');
-      } else if (user.role === 'infirmier') {
-        navigate('/infirmier/add-patient');
+      switch (user.role) {
+        case 'patient':
+          navigate('/patient/dashboard'); break;
+        case 'admin':
+          navigate('/admin/dashboard'); break;
+        case 'medecin':
+          navigate('/medecin/dashboard'); break;
+        case 'infirmier':
+          navigate('/infirmier/add-patient'); break;
+        default:
+          navigate('/');
       }
     } catch (err) {
       console.log(err.response);
@@ -70,7 +71,6 @@ const Login = () => {
           Accédez à votre espace personnel pour gérer vos <br />rendez-vous et dossiers médicaux
         </p>
         <div className="max-w-md mx-auto">
-          {/* Ajout des messages d'erreur et de succès */}
           {error && <p className="text-red-500 text-center mb-6">{error}</p>}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -89,8 +89,8 @@ const Login = () => {
               <label className="block text-gray-700">Mot de passe</label>
               <input
                 type="password"
-                name="mot_de_passe"
-                value={formData.mot_de_passe}
+                name="password"
+                value={formData.password}
                 onChange={handleChange}
                 placeholder="********"
                 className="border p-3 rounded w-full"
@@ -117,8 +117,6 @@ const Login = () => {
           </form>
         </div>
       </div>
-
-      {/* Footer */}
       <Footer />
     </div>
   );

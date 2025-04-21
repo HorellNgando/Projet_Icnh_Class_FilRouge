@@ -1,50 +1,46 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
-    const [formData, setFormData] = useState({
-        nom: '',
-        prenom: '',
-        email: '',
-        telephone: '',
-        adresse: '',
-        password: '',
-    });
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    nom: '',
+    prenom: '',
+    email: '',
+    telephone: '',
+    adresse: '',
+    password: '',
+  });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-        setError('');
-    };
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError('');
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!formData.password) {
-            setError('The password field is required.');
-            return;
-        }
-        setLoading(true);
-        try {
-            const response = await axios.post('http://localhost:8000/api/register', formData);
-            const { token, user } = response.data;
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(user));
-            localStorage.setItem('role', user.role);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await axios.post('http://localhost:8000/api/register', formData);
+      const { token, user } = response.data;
 
-            // Redirection vers le tableau de bord patient
-            navigate('/patient/dashboard');
-        } catch (err) {
-            console.log(err.response);
-            setError(err.response?.data?.message || 'Erreur lors de l\'inscription');
-        } finally {
-            setLoading(false);
-        }
-    };
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('role', user.role);
+
+      navigate('/patient/dashboard');
+    } catch (err) {
+      console.error(err.response);
+      setError(err.response?.data?.message || 'Erreur lors de l’inscription.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
